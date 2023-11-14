@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "start": "bun run src/index.tsx",
+    "dev": "bun run --hot src/index.tsx"
+  },
+  "dependencies": {
+    "hono": "^3.10.0"
+  },
+  "devDependencies": {
+    "bun-types": "^1.0.7"
+  },
+  "name": "cf-ai-web-ui",
+  "module": "index.ts",
+  "type": "module",
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
