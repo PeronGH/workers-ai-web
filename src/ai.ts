@@ -21,11 +21,6 @@ export class CloudflareAI {
 
     const body = shouldKeep ? input : JSON.stringify(input);
 
-    console.debug("RunRequest", {
-      model,
-      input: body,
-    });
-
     return fetch(
       `https://api.cloudflare.com/client/v4/accounts/${this.#accountId}/ai/run/${model}`,
       {
