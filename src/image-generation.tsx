@@ -2,14 +2,14 @@ import { FC } from "hono/jsx";
 
 export const ImageGeneration: FC = () => (
   <div
-    x-data="{ prompt: '', imageUrl: null, loading: false}"
+    x-data="{ prompt: '', imageUrl: null, loading: false }"
     class="container mx-auto p-4"
   >
     <form
       x-data="{async generate(){
       if(!prompt||loading)return;loading=true;
       imageUrl=await fetch('/api/run/@cf/stabilityai/stable-diffusion-xl-base-1.0',
-      {method:'POST',body:JSON.stringify({ prompt })})
+      {method:'POST',body:JSON.stringify({prompt})})
       .then(r=>r.blob()).then(b=>URL.createObjectURL(b)).catch(()=>{}).finally(()=>loading=false);}}"
       class="flex items-center mb-4"
       x-on:submit="event.preventDefault();await generate()"
