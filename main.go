@@ -29,7 +29,7 @@ func main() {
 	app.Use(recover.New())
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("views/index", fiber.Map{}, "views/layouts/main")
+		return c.Render("views/pages/image-generation", fiber.Map{}, "views/layouts/main")
 	})
 
 	app.Post("/api/run/*", func(c *fiber.Ctx) error {
