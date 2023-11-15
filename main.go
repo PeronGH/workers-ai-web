@@ -16,6 +16,11 @@ import (
 //go:embed views/*
 var views embed.FS
 
+var paths = map[string]string{
+	"/":           "Image Generation",
+	"/similarity": "Embedding Similarity",
+}
+
 func main() {
 	err := godotenv.Load()
 	if err == nil {
@@ -29,7 +34,10 @@ func main() {
 	app.Use(recover.New())
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("views/pages/image-generation", fiber.Map{}, "views/layouts/main")
+		return c.Render("views/pages/image-generation", fiber.Map{
+			"Paths":       paths,
+			"CurrentPath": c.Path(),
+		}, "views/layouts/main")
 	})
 
 	app.Post("/api/run/*", func(c *fiber.Ctx) error {
