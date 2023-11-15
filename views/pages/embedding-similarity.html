@@ -29,12 +29,12 @@
         }
 
         function calculateCosineSimilarity(vectorA, vectorB) {
-            let dotProduct = math.dot(vectorA, vectorB);
+            const dotProduct = math.dot(vectorA, vectorB);
 
-            let magnitudeA = math.norm(vectorA);
-            let magnitudeB = math.norm(vectorB);
+            const magnitudeA = math.norm(vectorA);
+            const magnitudeB = math.norm(vectorB);
 
-            let cosineSimilarity = dotProduct / (magnitudeA * magnitudeB);
+            const cosineSimilarity = dotProduct / (magnitudeA * magnitudeB);
 
             return cosineSimilarity;
         }
