@@ -1,4 +1,4 @@
-<div x-data="{ textA: '', textB: '', similarity: null }">
+<div x-data="{ textA: '', textB: '', similarity: null, loading: false }">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="w-full">
             {{ template "views/partials/large-textarea" "textA" }}
@@ -7,13 +7,13 @@
             {{ template "views/partials/large-textarea" "textB" }}
         </div>
     </div>
-    <div class="w-full flex flex-col items-center">
+    <div class="w-full flex flex-col items-center space-y-2">
         <button
-            class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            @click="similarity = await getSimilarity(textA, textB)"
-        >
-            Compare
-        </button>
+            class="mt-4 bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none"
+            :disabled="loading || !textA || !textB"
+            x-text="loading ? 'Comparing...' : 'Compare'"
+            @click="loading = true; similarity = await getSimilarity(textA, textB); loading = false;"
+        ></button>
         <p x-show="similarity" x-text="`Similarity: ${similarity}`"></p>
     </div>
 
