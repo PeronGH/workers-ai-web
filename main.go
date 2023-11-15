@@ -18,8 +18,8 @@ var views embed.FS
 
 func main() {
 	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if err == nil {
+		log.Println("Loaded .env file")
 	}
 
 	engine := html.NewFileSystem(http.FS(views), ".html")
