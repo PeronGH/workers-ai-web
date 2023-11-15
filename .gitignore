@@ -49,6 +49,8 @@ bower_components
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 
 build/Release
+tmp
+cf-ai-web-ui
 
 # Dependency directories
 
@@ -173,4 +175,3 @@ dist
 
 # Finder (MacOS) folder config
 .DS_Store
-

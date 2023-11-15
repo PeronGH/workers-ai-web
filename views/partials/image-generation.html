@@ -1,0 +1,39 @@
+<div x-data="{ prompt: '', imageUrl: null, loading: false }">
+    <form
+        class="flex items-center mb-4"
+        @submit.prevent="if (!prompt || loading) return; loading = true; imageUrl = await generateImage(prompt); loading = false;"
+    >
+        <input
+            type="text"
+            x-model="prompt"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Type prompt here..."
+        />
+        <button
+            :disabled="loading"
+            class="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+            x-text="loading ? 'Generating...' : 'Generate'"
+        ></button>
+    </form>
+
+    <div x-show="imageUrl" class="flex justify-center mt-4">
+        <img
+            :src="imageUrl"
+            alt="Generated Image"
+            class="max-w-full h-auto rounded-md shadow-lg"
+        />
+    </div>
+
+    <script>
+        function generateImage(prompt) {
+            return fetch(
+                '/api/run/@cf/stabilityai/stable-diffusion-xl-base-1.0',
+                { method: 'POST', body: JSON.stringify({ prompt }) }
+            )
+                .then(r => r.blob())
+                .then(b => URL.createObjectURL(b))
+                .catch(e => console.error(e));
+        }
+    </script>
+</div>
