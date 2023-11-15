@@ -8,6 +8,7 @@ import (
 	"github.com/PeronGH/cf-ai-web-ui/internal/api"
 	"github.com/PeronGH/cf-ai-web-ui/internal/utils"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
 )
@@ -24,6 +25,8 @@ func main() {
 	engine := html.NewFileSystem(http.FS(views), ".html")
 
 	app := fiber.New(fiber.Config{Views: engine})
+
+	app.Use(recover.New())
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("views/index", fiber.Map{}, "views/layouts/main")
