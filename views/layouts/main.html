@@ -15,7 +15,7 @@
                 {{ range $path, $name := .Paths }}
                 <a
                     href="{{$path}}"
-                    class="border-b-4 {{ if eq $path $.CurrentPath }} border-blue-500 {{ end }}"
+                    class="border-b-4 {{ if eq $path $.CurrentPath }} border-blue-500 {{ else }} text-gray-700 {{ end }}"
                 >
                     {{$name}}
                 </a>

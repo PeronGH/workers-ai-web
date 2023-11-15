@@ -16,7 +16,7 @@ import (
 //go:embed views/*
 var views embed.FS
 
-var paths = map[string]string{
+var paths = fiber.Map{
 	"/":           "Image Generation",
 	"/similarity": "Embedding Similarity",
 }
@@ -35,6 +35,13 @@ func main() {
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("views/pages/image-generation", fiber.Map{
+			"Paths":       paths,
+			"CurrentPath": c.Path(),
+		}, "views/layouts/main")
+	})
+
+	app.Get("/similarity", func(c *fiber.Ctx) error {
+		return c.Render("views/pages/embedding-similarity", fiber.Map{
 			"Paths":       paths,
 			"CurrentPath": c.Path(),
 		}, "views/layouts/main")
