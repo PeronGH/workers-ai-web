@@ -1,0 +1,61 @@
+<div
+    class="w-full flex flex-col items-center"
+    x-data="{ recording: false, transcription: '', loading: false }"
+>
+    <button
+        class="mb-4 bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none"
+        :disabled="loading"
+        x-text="loading ? 'Transcribing...' : (recording ? 'Stop Recording' : 'Start Recording')"
+        @click="recording = !recording; recording ?
+        startRecording() :
+        (loading = true, transcription = await transcribe(await stopRecording()), loading = false)"
+    ></button>
+
+    <pre
+        x-show="transcription"
+        class="w-full p-2 border-2 rounded"
+        x-text="transcription"
+    ></pre>
+</div>
+
+<script type="module">
+    import Recorder from 'https://esm.sh/gh/mattdiamond/Recorderjs';
+
+    let recorder = null;
+
+    try {
+        const audioContext = new AudioContext();
+        const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+        });
+        const input = audioContext.createMediaStreamSource(stream);
+        recorder = new Recorder(input, { numChannels: 1 });
+    } catch (error) {
+        console.error(error);
+        alert('Error: ' + error);
+    }
+
+    window.startRecording = () => {
+        recorder && recorder.record();
+    };
+
+    window.stopRecording = async () => {
+        if (!recorder) return;
+
+        recorder.stop();
+        const blob = await new Promise(resolve => recorder.exportWAV(resolve));
+        recorder.clear();
+
+        return blob;
+    };
+
+    window.transcribe = blob => {
+        return fetch('/api/run/@cf/openai/whisper', {
+            method: 'POST',
+            body: blob,
+        })
+            .then(r => r.json())
+            .then(r => r.result.text)
+            .catch(e => console.error(e));
+    };
+</script>

@@ -17,8 +17,9 @@ import (
 var views embed.FS
 
 var paths = fiber.Map{
-	"/":           "Image Generation",
-	"/similarity": "Embedding Similarity",
+	"/":              "Image Generation",
+	"/similarity":    "Embedding Similarity",
+	"/transcription": "Transcription",
 }
 
 func main() {
@@ -42,6 +43,13 @@ func main() {
 
 	app.Get("/similarity", func(c *fiber.Ctx) error {
 		return c.Render("views/pages/embedding-similarity", fiber.Map{
+			"Paths":       paths,
+			"CurrentPath": c.Path(),
+		}, "views/layouts/main")
+	})
+
+	app.Get("/transcription", func(c *fiber.Ctx) error {
+		return c.Render("views/pages/transcription", fiber.Map{
 			"Paths":       paths,
 			"CurrentPath": c.Path(),
 		}, "views/layouts/main")
