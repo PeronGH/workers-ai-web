@@ -24,16 +24,16 @@
             class="max-w-full h-auto rounded-md shadow-lg"
         />
     </div>
-
-    <script>
-        function generateImage(prompt) {
-            return fetch(
-                '/api/run/@cf/stabilityai/stable-diffusion-xl-base-1.0',
-                { method: 'POST', body: JSON.stringify({ prompt }) }
-            )
-                .then(r => r.blob())
-                .then(b => URL.createObjectURL(b))
-                .catch(e => console.error(e));
-        }
-    </script>
 </div>
+
+<script>
+    function generateImage(prompt) {
+        return fetch('/api/run/@cf/stabilityai/stable-diffusion-xl-base-1.0', {
+            method: 'POST',
+            body: JSON.stringify({ prompt }),
+        })
+            .then(r => r.blob())
+            .then(b => URL.createObjectURL(b))
+            .catch(e => console.error(e));
+    }
+</script>
