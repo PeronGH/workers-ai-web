@@ -3,7 +3,11 @@
 >
     <form
         class="flex items-center mb-4"
-        @submit.prevent="if (!prompt || loading) return; loading = true; imageUrl = await generateImage(prompt); loading = false;"
+        @submit.prevent="if (!prompt || loading) return;
+        loading = true;
+        URL.revokeObjectURL(imageUrl);
+        imageUrl = await generateImage(prompt);
+        loading = false;"
     >
         <input
             type="text"
