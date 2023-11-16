@@ -6,9 +6,9 @@
         class="mb-4 bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none"
         :disabled="loading"
         x-text="loading ? 'Transcribing...' : (recording ? 'Stop Recording' : 'Start Recording')"
-        @click="recording = !recording; recording ?
-        startRecording() :
-        (loading = true, transcription = await transcribe(await stopRecording()), loading = false)"
+        @click="recording ?
+        (loading = true, transcription = await transcribe(await stopRecording()), loading = false, recording = false) :
+        recording = await startRecording()"
     ></button>
 
     <pre
@@ -23,25 +23,30 @@
 
     let recorder = null;
 
-    try {
+    async function initRecorder() {
+        if (recorder) return;
+
         const audioContext = new AudioContext();
         const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
         });
         const input = audioContext.createMediaStreamSource(stream);
         recorder = new Recorder(input, { numChannels: 1 });
-    } catch (error) {
-        console.error(error);
-        alert('Error: ' + error);
     }
 
-    window.startRecording = () => {
-        recorder && recorder.record();
+    window.startRecording = async () => {
+        try {
+            await initRecorder();
+            recorder.record();
+            return true;
+        } catch (error) {
+            console.error(error);
+            alert('Error: ' + error);
+            return false;
+        }
     };
 
     window.stopRecording = async () => {
-        if (!recorder) return;
-
         recorder.stop();
         const blob = await new Promise(resolve => recorder.exportWAV(resolve));
         recorder.clear();
