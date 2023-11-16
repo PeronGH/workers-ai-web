@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/PeronGH/cf-ai-web-ui/internal/api"
-	"github.com/PeronGH/cf-ai-web-ui/internal/utils"
+	"github.com/PeronGH/workers-ai-web/internal/api"
+	"github.com/PeronGH/workers-ai-web/internal/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html/v2"

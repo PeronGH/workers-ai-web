@@ -1,4 +1,4 @@
-module github.com/PeronGH/cf-ai-web-ui
+module github.com/PeronGH/workers-ai-web
 
 go 1.21.4
 
