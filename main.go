@@ -60,5 +60,12 @@ func main() {
 		return api.RunModel(model, c.Body(), c.Response().BodyWriter())
 	})
 
+	app.Get("/api/run/*", func(c *fiber.Ctx) error {
+		model := c.Path()[len("/api/run/"):]
+		input := c.Queries()
+
+		return api.RunModel(model, input, c.Response().BodyWriter())
+	})
+
 	log.Fatal(app.Listen(":" + utils.GetEnv("PORT", "3000")))
 }
