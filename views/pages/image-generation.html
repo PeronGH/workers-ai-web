@@ -58,7 +58,8 @@
             method: 'POST',
             body: JSON.stringify({ prompt }),
         })
-            .then(r => r.blob())
+            .then(r => r.arrayBuffer())
+            .then(a => new Blob([a], { type: 'image/png' }))
             .then(b => URL.createObjectURL(b))
             .catch(e => console.error(e));
     }
