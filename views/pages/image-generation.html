@@ -1,4 +1,6 @@
-<div x-data="{ prompt: '', imageUrl: null, loading: false }">
+<div
+    x-data="{ prompt: '', imageUrl: null, loading: false, fromLang: 'English', translating: false }"
+>
     <form
         class="flex items-center mb-4"
         @submit.prevent="if (!prompt || loading) return; loading = true; imageUrl = await generateImage(prompt); loading = false;"
@@ -16,6 +18,24 @@
             x-text="loading ? 'Generating...' : 'Generate'"
         ></button>
     </form>
+
+    <div class="flex w-full items-center justify-between">
+        <div class="flex items-center">
+            <p class="mr-2">Translate to English from</p>
+            <select class="p-1" x-model="fromLang">
+                <template x-for="lang in listLanguages()">
+                    <option :value="lang" x-text="lang"></option>
+                </template>
+            </select>
+        </div>
+
+        <button
+            :disabled="translating"
+            class="ml-4 bg-blue-500 disabled:bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            @click="translating = true; prompt = await translate(prompt, fromLang, 'English'); translating = false;"
+            x-text="translating ? 'Translating...' : 'Translate'"
+        ></button>
+    </div>
 
     <div x-show="imageUrl" class="flex justify-center mt-4">
         <img
@@ -39,3 +59,5 @@
             .catch(e => console.error(e));
     }
 </script>
+
+{{ template "views/partials/translate-script" }}

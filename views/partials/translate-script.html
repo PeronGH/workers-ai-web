@@ -1,0 +1,32 @@
+<script>
+    'use strict';
+
+    function listLanguages() {
+        return [
+            'English',
+            'Chinese',
+            'French',
+            'Spanish',
+            'Arabic',
+            'Russian',
+            'German',
+            'Japanese',
+            'Portuguese',
+            'Hindi',
+        ];
+    }
+
+    function translate(text, from, to) {
+        return fetch('/api/run/@cf/meta/m2m100-1.2b', {
+            method: 'POST',
+            body: JSON.stringify({
+                text,
+                source_lang: from.toLowerCase(),
+                target_lang: to.toLowerCase(),
+            }),
+        })
+            .then(r => r.json())
+            .then(r => r.result.translated_text)
+            .catch(e => console.error(e));
+    }
+</script>
