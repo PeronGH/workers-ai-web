@@ -59,19 +59,32 @@
     }
 
     function wrapSelectedText(textarea, prefix, suffix) {
-        const startPos = textarea.selectionStart;
-        const endPos = textarea.selectionEnd;
+        let startPos = textarea.selectionStart;
+        let endPos = textarea.selectionEnd;
 
         if (startPos === endPos) {
-            return prefix + textarea.value + suffix;
+            startPos = 0;
+            endPos = textarea.value.length;
         }
 
-        return (
-            textarea.value.substring(0, startPos) +
-            prefix +
-            textarea.value.substring(startPos, endPos) +
-            suffix +
-            textarea.value.substring(endPos, textarea.value.length)
-        );
+        const textBefore = textarea.value.slice(0, startPos);
+        const selectedText = textarea.value.slice(startPos, endPos);
+        const textAfter = textarea.value.slice(endPos);
+
+        let updatedText = textBefore;
+
+        if (textBefore.endsWith(prefix) || selectedText.startsWith(prefix)) {
+            updatedText += selectedText;
+        } else {
+            updatedText += prefix + selectedText;
+        }
+
+        if (textAfter.startsWith(suffix) || selectedText.endsWith(suffix)) {
+            updatedText += textAfter;
+        } else {
+            updatedText += suffix + textAfter;
+        }
+
+        return updatedText;
     }
 </script>
