@@ -6,7 +6,6 @@
             x-text="loading ? 'Stop' : 'Generate'"
             @click="if (loading) {
                 abortController.abort();
-                loading = false;
                 return;
             }
             loading = true;
@@ -52,6 +51,10 @@
                 console.error(e);
                 queue.push('[DONE]');
             },
+        });
+
+        signal.addEventListener('abort', () => {
+            queue.push('[DONE]');
         });
 
         for (;;) {
