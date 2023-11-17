@@ -80,7 +80,9 @@
             .catch(e => console.error(e));
     }
 
-    const imagePromptEnhanceFewShot = `Enhance base prompt to detailed prompt.
+    function getImageEnhancePrompt(basePrompt) {
+        return `[INST]Enhance base prompt to detailed prompt.
+Examples:
 
 Base Prompt:
 anime boy with yellow hair and blue eyes
@@ -100,13 +102,8 @@ cityscape at dusk with skyscrapers and a river
 Detailed Prompt:
 A cityscape at dusk where modern skyscrapers and historic buildings coexist by a river. The soft evening light highlights the contrast between old and new architecture, with the river acting as a mirror reflecting the diverse urban skyline.
 
-Base Prompt (Last One):
-`;
-
-    function getImageEnhancePrompt(basePrompt) {
-        return (
-            imagePromptEnhanceFewShot + basePrompt + '\n\nDetailed Prompt:\n'
-        );
+Now, enhance the following base prompt to a detailed prompt:
+${basePrompt}[/INST]Detailed Prompt:`;
     }
 </script>
 
