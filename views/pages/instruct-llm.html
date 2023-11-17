@@ -1,6 +1,6 @@
 <div x-data="{ prompt: '', loading: false, abortController: null }">
     {{ template "views/partials/large-textarea" "prompt" }}
-    <div class="mt-2 w-full flex justify-center">
+    <div class="mt-2 w-full flex justify-center gap-4">
         <button
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             x-text="loading ? 'Stop' : 'Generate'"
