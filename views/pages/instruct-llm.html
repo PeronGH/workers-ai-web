@@ -1,11 +1,17 @@
-<div x-data="{ prompt: '', loading: false }">
+<div x-data="{ prompt: '', loading: false, abortController: null }">
     {{ template "views/partials/large-textarea" "prompt" }}
     <div class="mt-2 w-full flex justify-center">
         <button
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            x-text="loading ? 'Generating...' : 'Generate'"
-            @click="loading = true;
-            for await (const token of generateText(prompt)) {
+            x-text="loading ? 'Stop' : 'Generate'"
+            @click="if (loading) {
+                abortController.abort();
+                loading = false;
+                return;
+            }
+            loading = true;
+            abortController = new AbortController();
+            for await (const token of generateText(prompt, abortController.signal)) {
                 prompt += token;
             }
             loading = false;"
@@ -18,7 +24,7 @@
 
     import { fetchEventSource } from 'https://esm.sh/@microsoft/fetch-event-source';
 
-    window.generateText = async function* (prompt) {
+    window.generateText = async function* (prompt, signal) {
         const queue = [];
 
         fetchEventSource('/api/run/@cf/mistral/mistral-7b-instruct-v0.1', {
@@ -26,7 +32,9 @@
             body: JSON.stringify({
                 prompt,
                 stream: true,
+                max_tokens: 1800,
             }),
+            signal,
 
             onmessage(msg) {
                 let data = msg.data;
