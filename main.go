@@ -28,6 +28,10 @@ func main() {
 		log.Println("Loaded .env file")
 	}
 
+	if !utils.HasEnv("CF_API_TOKEN") || !utils.HasEnv("CF_ACCOUNT_ID") {
+		log.Fatal("Missing mandatory environment variables")
+	}
+
 	engine := html.NewFileSystem(http.FS(views), ".html")
 
 	app := fiber.New(fiber.Config{Views: engine})

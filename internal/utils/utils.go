@@ -9,3 +9,8 @@ func GetEnv(key, defaultValue string) string {
 	}
 	return value
 }
+
+func HasEnv(key string) bool {
+	value := os.Getenv(key)
+	return value != ""
+}
