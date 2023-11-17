@@ -32,7 +32,7 @@
             },
         });
 
-        signal.addEventListener('abort', () => {
+        signal?.addEventListener('abort', () => {
             queue.push('[DONE]');
         });
 

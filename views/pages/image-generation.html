@@ -1,6 +1,4 @@
-<div
-    x-data="{ prompt: '', imageUrl: null, loading: false, fromLang: 'English', translating: false }"
->
+<div x-data="{ prompt: '', imageUrl: null, loading: false }">
     <form
         class="flex items-center mb-4"
         @submit.prevent="if (!prompt || loading) return;
@@ -23,9 +21,12 @@
         ></button>
     </form>
 
-    <div class="flex w-full items-center justify-between">
-        <div class="flex items-center">
-            <p class="mr-2">Translate to English from</p>
+    <div
+        x-data="{ fromLang: '', translating: false, enhancing: false }"
+        class="grid w-full grid-cols-1 md:grid-cols-2 gap-2"
+    >
+        <div class="flex items-center gap-4">
+            <p class="whitespace-nowrap">Translate to English from</p>
             <select class="p-1" x-model="fromLang">
                 <template x-for="lang in listLanguages()">
                     <option :value="lang" x-text="lang"></option>
@@ -33,12 +34,25 @@
             </select>
         </div>
 
-        <button
-            :disabled="!prompt || translating"
-            class="ml-4 bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            @click="translating = true; prompt = await translate(prompt, fromLang, 'English'); translating = false;"
-            x-text="translating ? 'Translating...' : 'Translate'"
-        ></button>
+        <div class="flex items-center justify-end">
+            <button
+                :disabled="!prompt || translating"
+                class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                x-text="translating ? 'Translating...' : 'Translate'"
+                @click="translating = true; prompt = await translate(prompt, fromLang, 'English'); translating = false;"
+            ></button>
+
+            <button
+                :disabled="!prompt || enhancing"
+                class="ml-4 bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                x-text="enhancing ? 'Enhancing...' : 'Enhance'"
+                @click="enhancing = true; enhancePrompt = getImageEnhancePrompt(prompt); prompt = ''
+                for await (const token of generateText(enhancePrompt)) {
+                    prompt += token;
+                }
+                enhancing = false;"
+            ></button>
+        </div>
     </div>
 
     <div x-show="imageUrl" class="flex justify-center mt-4">
@@ -49,6 +63,8 @@
         />
     </div>
 </div>
+
+{{ template "views/partials/generate-text-script" }}
 
 <script>
     'use strict';
@@ -62,6 +78,35 @@
             .then(a => new Blob([a], { type: 'image/png' }))
             .then(b => URL.createObjectURL(b))
             .catch(e => console.error(e));
+    }
+
+    const imagePromptEnhanceFewShot = `Enhance base prompt to detailed prompt.
+
+Base Prompt:
+anime boy with yellow hair and blue eyes
+
+Detailed Prompt:
+Anime-style portrait of a boy with yellow hair and blue eyes, upper body shot. He is adorned in traditional Japanese clothing, like a yukata, with a serene, historical Japanese garden as the backdrop.
+
+Base Prompt:
+landscape with a mountain and a lake
+
+Detailed Prompt:
+A tranquil mountain landscape beside a lake during sunrise, featuring a sky painted with hues of pink and orange reflecting off the calm waters. The mountain is partially shrouded in morning mist, adding to the serene and peaceful atmosphere.
+
+Base Prompt:
+cityscape at dusk with skyscrapers and a river
+
+Detailed Prompt:
+A cityscape at dusk where modern skyscrapers and historic buildings coexist by a river. The soft evening light highlights the contrast between old and new architecture, with the river acting as a mirror reflecting the diverse urban skyline.
+
+Base Prompt (Last One):
+`;
+
+    function getImageEnhancePrompt(basePrompt) {
+        return (
+            imagePromptEnhanceFewShot + basePrompt + '\n\nDetailed Prompt:\n'
+        );
     }
 </script>
 
