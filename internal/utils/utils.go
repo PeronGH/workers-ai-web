@@ -1,6 +1,11 @@
 package utils
 
-import "os"
+import (
+	"os"
+
+	"github.com/go-resty/resty/v2"
+	"github.com/valyala/fasthttp"
+)
 
 func GetEnv(key, defaultValue string) string {
 	value := os.Getenv(key)
@@ -13,4 +18,11 @@ func GetEnv(key, defaultValue string) string {
 func HasEnv(key string) bool {
 	value := os.Getenv(key)
 	return value != ""
+}
+
+func PipeResponse(from *resty.Response, to *fasthttp.Response) {
+	to.SetStatusCode(from.StatusCode())
+	to.Header.SetContentType(from.Header().Get("Content-Type"))
+
+	to.SetBodyStream(from.RawBody(), -1)
 }

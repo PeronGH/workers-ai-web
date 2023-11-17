@@ -61,14 +61,16 @@ func main() {
 
 	app.Post("/api/run/*", func(c *fiber.Ctx) error {
 		model := c.Path()[len("/api/run/"):]
-		return api.RunModel(model, c.Body(), c.Response().BodyWriter())
+		input := c.Body()
+
+		return api.PipeRunModelToResponse(model, input, c.Response())
 	})
 
 	app.Get("/api/run/*", func(c *fiber.Ctx) error {
 		model := c.Path()[len("/api/run/"):]
 		input := c.Queries()
 
-		return api.RunModel(model, input, c.Response().BodyWriter())
+		return api.PipeRunModelToResponse(model, input, c.Response())
 	})
 
 	log.Fatal(app.Listen(":" + utils.GetEnv("PORT", "3000")))
