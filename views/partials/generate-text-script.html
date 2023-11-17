@@ -1,0 +1,48 @@
+<script type="module">
+    'use strict';
+
+    import { fetchEventSource } from 'https://esm.sh/@microsoft/fetch-event-source';
+
+    window.generateText = async function* (prompt, signal) {
+        const queue = [];
+
+        fetchEventSource('/api/run/@cf/mistral/mistral-7b-instruct-v0.1', {
+            method: 'POST',
+            body: JSON.stringify({
+                prompt,
+                stream: true,
+            }),
+            signal,
+
+            onmessage(msg) {
+                let data = msg.data;
+                if (data !== '[DONE]') {
+                    data = JSON.parse(data).response;
+                }
+                queue.push(data);
+            },
+
+            onclose() {
+                queue.push('[DONE]');
+            },
+
+            onerror(e) {
+                console.error(e);
+                queue.push('[DONE]');
+            },
+        });
+
+        signal.addEventListener('abort', () => {
+            queue.push('[DONE]');
+        });
+
+        for (;;) {
+            await new Promise(r => setTimeout(r));
+
+            const token = queue.shift();
+            if (!token) continue;
+            if (token === '[DONE]') break;
+            yield token;
+        }
+    };
+</script>
