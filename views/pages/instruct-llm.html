@@ -28,9 +28,9 @@
         <button
             :disabled="!prompt || loading"
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            @click="prompt = wrapSelectedText($refs.textinput, '<s>', '</s>')"
+            @click="prompt = wrapSelectedText($refs.textinput, '', '</s>')"
         >
-            As Conversation
+            Add &lt;/s&gt;
         </button>
     </div>
 </div>
@@ -49,9 +49,13 @@
         $data.loading = true;
         $data.abortController = new AbortController();
 
-        const isConversation = $data.prompt.endsWith('</s>');
+        // preprocess prompt
+        if (!$data.prompt.startsWith('<s>')) {
+            $data.prompt = '<s>' + $data.prompt;
+        }
 
-        if (isConversation) {
+        const tailingSTag = $data.prompt.endsWith('</s>');
+        if (tailingSTag) {
             $data.prompt = $data.prompt.slice(0, -'</s>'.length);
         }
 
@@ -64,7 +68,7 @@
             $data.prompt += token;
         }
 
-        if (isConversation) {
+        if (tailingSTag) {
             $data.prompt += '</s>';
         }
 
