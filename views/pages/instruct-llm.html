@@ -54,8 +54,7 @@
             $data.prompt = '<s>' + $data.prompt;
         }
 
-        const tailingSTag = $data.prompt.endsWith('</s>');
-        if (tailingSTag) {
+        if ($data.prompt.endsWith('</s>')) {
             $data.prompt = $data.prompt.slice(0, -'</s>'.length);
         }
 
