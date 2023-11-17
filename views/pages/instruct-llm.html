@@ -3,6 +3,7 @@
         class="border-2 rounded-lg w-full resize-none p-2"
         rows="10"
         x-model="prompt"
+        x-ref="textinput"
         placeholder="Type here..."
         @keydown.cmd.enter.prevent="await generateTextAndUpdateUI($data)"
         @keydown.ctrl.enter.prevent="await generateTextAndUpdateUI($data)"
@@ -17,14 +18,14 @@
         ></button>
         <button
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            @click="prompt = `[INST]${prompt}[/INST]`"
+            @click="prompt = wrapSelectedText($refs.textinput, '[INST]', '[/INST]')"
         >
             As Instruction
         </button>
 
         <button
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            @click="prompt = `<s>${prompt}</s>`"
+            @click="prompt = wrapSelectedText($refs.textinput, '<s>', '</s>')"
         >
             As Conversation
         </button>
@@ -55,5 +56,22 @@
         }
 
         $data.loading = false;
+    }
+
+    function wrapSelectedText(textarea, prefix, suffix) {
+        const startPos = textarea.selectionStart;
+        const endPos = textarea.selectionEnd;
+
+        if (startPos === endPos) {
+            return prefix + textarea.value + suffix;
+        }
+
+        return (
+            textarea.value.substring(0, startPos) +
+            prefix +
+            textarea.value.substring(startPos, endPos) +
+            suffix +
+            textarea.value.substring(endPos, textarea.value.length)
+        );
     }
 </script>
