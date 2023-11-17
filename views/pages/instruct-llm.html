@@ -5,6 +5,7 @@
         x-model="prompt"
         x-ref="textinput"
         placeholder="Type here..."
+        :disabled="loading"
         @keydown.cmd.enter.prevent="await generateTextAndUpdateUI($data)"
         @keydown.ctrl.enter.prevent="await generateTextAndUpdateUI($data)"
     ></textarea>
@@ -17,6 +18,7 @@
             @click="await generateTextAndUpdateUI($data)"
         ></button>
         <button
+            :disabled="!prompt || loading"
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             @click="prompt = wrapSelectedText($refs.textinput, '[INST]', '[/INST]')"
         >
@@ -24,6 +26,7 @@
         </button>
 
         <button
+            :disabled="!prompt || loading"
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             @click="prompt = wrapSelectedText($refs.textinput, '<s>', '</s>')"
         >
