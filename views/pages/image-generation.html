@@ -23,9 +23,9 @@
 
     <div
         x-data="{ fromLang: '', translating: false, enhancing: false }"
-        class="grid w-full grid-cols-1 md:grid-cols-2 gap-2"
+        class="grid w-full grid-cols-1 md:grid-cols-2 gap-4"
     >
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4 justify-center md:justify-start">
             <p class="whitespace-nowrap">Translate to English from</p>
             <select class="p-1" x-model="fromLang">
                 <template x-for="lang in listLanguages()">
@@ -34,7 +34,7 @@
             </select>
         </div>
 
-        <div class="flex items-center justify-end">
+        <div class="flex items-center justify-center md:justify-end">
             <button
                 :disabled="!prompt || translating"
                 class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
