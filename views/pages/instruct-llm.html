@@ -46,6 +46,12 @@
         $data.loading = true;
         $data.abortController = new AbortController();
 
+        const isConversation = $data.prompt.endsWith('</s>');
+
+        if (isConversation) {
+            $data.prompt = $data.prompt.slice(0, -'</s>'.length);
+        }
+
         const tokenStream = generateText(
             $data.prompt,
             $data.abortController.signal
@@ -53,6 +59,10 @@
 
         for await (const token of tokenStream) {
             $data.prompt += token;
+        }
+
+        if (isConversation) {
+            $data.prompt += '</s>';
         }
 
         $data.loading = false;
