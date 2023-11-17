@@ -59,6 +59,9 @@
             $data.prompt = $data.prompt.slice(0, -'</s>'.length);
         }
 
+        let lastToken;
+        let lastTokenCount = 0;
+
         const tokenStream = generateText(
             $data.prompt,
             $data.abortController.signal
@@ -66,9 +69,17 @@
 
         for await (const token of tokenStream) {
             $data.prompt += token;
+
+            if (token === lastToken) {
+                lastTokenCount++;
+            } else {
+                lastToken = token;
+                lastTokenCount = 1;
+            }
         }
 
-        if (tailingSTag) {
+        if (lastTokenCount > 1) {
+            $data.prompt = $data.prompt.slice(0, -lastToken.length);
             $data.prompt += '</s>';
         }
 
