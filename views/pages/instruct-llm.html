@@ -1,20 +1,19 @@
 <div x-data="{ prompt: '', loading: false, abortController: null }">
-    {{ template "views/partials/large-textarea" "prompt" }}
+    <textarea
+        class="border-2 rounded-lg w-full resize-none p-2"
+        rows="10"
+        x-model="prompt"
+        placeholder="Type here..."
+        @keydown.cmd.enter.prevent="await generateTextAndUpdateUI($data)"
+        @keydown.ctrl.enter.prevent="await generateTextAndUpdateUI($data)"
+    ></textarea>
+
     <div class="mt-2 w-full flex justify-center gap-4">
         <button
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             x-text="loading ? 'Stop' : 'Generate'"
             :disabled="!prompt"
-            @click="if (loading) {
-                abortController.abort();
-                return;
-            }
-            loading = true;
-            abortController = new AbortController();
-            for await (const token of generateText(prompt, abortController.signal)) {
-                prompt += token;
-            }
-            loading = false;"
+            @click="await generateTextAndUpdateUI($data)"
         ></button>
         <button
             class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -33,3 +32,28 @@
 </div>
 
 {{ template "views/partials/generate-text-script" }}
+
+<script>
+    'use strict';
+
+    async function generateTextAndUpdateUI($data) {
+        if ($data.loading) {
+            $data.abortController.abort();
+            return;
+        }
+
+        $data.loading = true;
+        $data.abortController = new AbortController();
+
+        const tokenStream = generateText(
+            $data.prompt,
+            $data.abortController.signal
+        );
+
+        for await (const token of tokenStream) {
+            $data.prompt += token;
+        }
+
+        $data.loading = false;
+    }
+</script>
