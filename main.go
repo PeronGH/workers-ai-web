@@ -20,6 +20,7 @@ var paths = fiber.Map{
 	"/":              "Image Generation",
 	"/similarity":    "Embedding Similarity",
 	"/transcription": "Transcription",
+	"/instruct":      "Instruct LLM",
 }
 
 func main() {
@@ -54,6 +55,13 @@ func main() {
 
 	app.Get("/transcription", func(c *fiber.Ctx) error {
 		return c.Render("views/pages/transcription", fiber.Map{
+			"Paths":       paths,
+			"CurrentPath": c.Path(),
+		}, "views/layouts/main")
+	})
+
+	app.Get("/instruct", func(c *fiber.Ctx) error {
+		return c.Render("views/pages/instruct-llm", fiber.Map{
 			"Paths":       paths,
 			"CurrentPath": c.Path(),
 		}, "views/layouts/main")

@@ -1,0 +1,58 @@
+<div x-data="{ prompt: '', loading: false }">
+    {{ template "views/partials/large-textarea" "prompt" }}
+    <div class="mt-2 w-full flex justify-center">
+        <button
+            class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            x-text="loading ? 'Generating...' : 'Generate'"
+            @click="loading = true;
+            for await (const token of generateText(prompt)) {
+                prompt += token;
+            }
+            loading = false;"
+        ></button>
+    </div>
+</div>
+
+<script type="module">
+    'use strict';
+
+    import { fetchEventSource } from 'https://esm.sh/@microsoft/fetch-event-source';
+
+    window.generateText = async function* (prompt) {
+        const queue = [];
+
+        fetchEventSource('/api/run/@cf/mistral/mistral-7b-instruct-v0.1', {
+            method: 'POST',
+            body: JSON.stringify({
+                prompt,
+                stream: true,
+            }),
+
+            onmessage(msg) {
+                let data = msg.data;
+                if (data !== '[DONE]') {
+                    data = JSON.parse(data).response;
+                }
+                queue.push(data);
+            },
+
+            onclose() {
+                queue.push('[DONE]');
+            },
+
+            onerror(e) {
+                console.error(e);
+                queue.push('[DONE]');
+            },
+        });
+
+        for (;;) {
+            await new Promise(r => setTimeout(r));
+
+            const token = queue.shift();
+            if (!token) continue;
+            if (token === '[DONE]') break;
+            yield token;
+        }
+    };
+</script>
