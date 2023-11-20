@@ -9,7 +9,7 @@
         <script src="https://cdn.twind.style"></script>
     </head>
 
-    <body>
+    <body class="w-full min-h-screen dark:(bg-gray-900 text-gray-50)">
         <div class="container mx-auto">
             <div
                 class="flex flex-col md:flex-row m-4 gap-4 items-center justify-center"
@@ -17,7 +17,7 @@
                 {{ range $path, $name := .Paths }}
                 <a
                     href="{{$path}}"
-                    class="whitespace-nowrap w-full border-b-4 {{ if eq $path $.CurrentPath }} border-blue-500 {{ else }} text-gray-700 {{ end }}"
+                    class="whitespace-nowrap w-full border-b-4 {{ if eq $path $.CurrentPath }} border-blue-500 {{ else }} text-gray-700 dark:text-gray-500 {{ end }}"
                 >
                     {{$name}}
                 </a>

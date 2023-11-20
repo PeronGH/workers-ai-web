@@ -10,7 +10,7 @@
         <input
             type="text"
             x-model="prompt"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline dark:(bg-gray-900 text-gray-50)"
             placeholder="Type prompt here..."
         />
         <button
@@ -27,7 +27,10 @@
     >
         <div class="flex items-center gap-4 justify-center md:justify-start">
             <p class="whitespace-nowrap">Translate to English from</p>
-            <select class="p-1" x-model="fromLang">
+            <select
+                class="p-1 dark:(bg-gray-900 text-gray-50)"
+                x-model="fromLang"
+            >
                 <template x-for="lang in listLanguages()">
                     <option :value="lang" x-text="lang"></option>
                 </template>
