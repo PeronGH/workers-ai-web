@@ -2,14 +2,24 @@
     class="w-full flex flex-col items-center"
     x-data="{ recording: false, transcription: '', loading: false }"
 >
-    <button
-        class="mb-4 bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none"
-        :disabled="loading"
-        x-text="loading ? 'Transcribing...' : (recording ? 'Stop Recording' : 'Start Recording')"
-        @click="recording ?
+    <div class="flex mb-4 justify-center items-center gap-x-4">
+        <button
+            class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none"
+            :disabled="loading"
+            x-text="loading ? 'Transcribing...' : (recording ? 'Stop Recording' : 'Start Recording')"
+            @click="recording ?
         (loading = true, transcription = await transcribe(await stopRecording()), loading = false, recording = false) :
         recording = await startRecording()"
-    ></button>
+        ></button>
+
+        <input
+            type="file"
+            accept="audio/*"
+            x-show="!loading"
+            class="p-1 dark:(bg-gray-900 text-gray-50)"
+            @change="loading = true; transcription = await transcribe(await toWav($el.files[0])); loading = false;"
+        />
+    </div>
 
     <p
         x-show="transcription"
@@ -22,6 +32,7 @@
     'use strict';
 
     import Recorder from 'https://esm.sh/gh/mattdiamond/Recorderjs';
+    import toWav from 'https://esm.sh/audiobuffer-to-wav';
 
     let recorder = null;
 
@@ -64,5 +75,12 @@
             .then(r => r.json())
             .then(r => r.result.text)
             .catch(e => console.error(e));
+    };
+
+    window.toWav = async file => {
+        const context = new AudioContext();
+        const buffer = await file.arrayBuffer();
+        const audioBuffer = await context.decodeAudioData(buffer);
+        return toWav(audioBuffer);
     };
 </script>
