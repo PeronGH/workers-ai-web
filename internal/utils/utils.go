@@ -23,6 +23,7 @@ func HasEnv(key string) bool {
 func PipeResponse(from *resty.Response, to *fasthttp.Response) {
 	to.SetStatusCode(from.StatusCode())
 	to.Header.SetContentType(from.Header().Get("Content-Type"))
+	to.ImmediateHeaderFlush = true
 
 	to.SetBodyStream(from.RawBody(), -1)
 }
