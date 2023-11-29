@@ -42,10 +42,6 @@
         $data.abortController = new AbortController();
 
         // preprocess prompt
-        if (!$data.prompt.startsWith('<s>')) {
-            $data.prompt = '<s>' + $data.prompt;
-        }
-
         if ($data.prompt.endsWith('</s>')) {
             $data.prompt = $data.prompt.slice(0, -'</s>'.length);
         }
@@ -72,6 +68,9 @@
         if (lastTokenCount > 1) {
             $data.prompt = $data.prompt.slice(0, -lastToken.length);
             $data.prompt += '</s>';
+            if (!$data.prompt.startsWith('<s>')) {
+                $data.prompt = '<s>' + $data.prompt;
+            }
         }
 
         $data.loading = false;
