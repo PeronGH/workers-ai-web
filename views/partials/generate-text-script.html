@@ -3,13 +3,14 @@
 
     import { fetchEventSource } from 'https://esm.sh/@microsoft/fetch-event-source';
 
-    window.generateText = async function* (prompt, signal) {
+    window.generateText = async function* (prompt, { signal, raw = true } = {}) {
         const queue = [];
 
-        fetchEventSource('/api/run/@cf/mistral/mistral-7b-instruct-v0.1', {
+        fetchEventSource('/api/run/@hf/thebloke/zephyr-7b-beta-awq', {
             method: 'POST',
             body: JSON.stringify({
                 prompt,
+                raw,
                 stream: true,
             }),
             signal,
@@ -18,6 +19,9 @@
                 let data = msg.data;
                 if (data !== '[DONE]') {
                     data = JSON.parse(data).response;
+                }
+                if (data === '</s>') {
+                    data = '[DONE]';
                 }
                 queue.push(data);
             },

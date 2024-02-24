@@ -17,13 +17,6 @@
             :disabled="!prompt"
             @click="await generateTextAndUpdateUI($data)"
         ></button>
-        <button
-            :disabled="!prompt || loading"
-            class="bg-blue-500 disabled:bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            @click="prompt = wrapSelectedText($refs.textinput, '[INST] ', ' [/INST]')"
-        >
-            As Instruction
-        </button>
     </div>
 </div>
 
@@ -41,36 +34,13 @@
         $data.loading = true;
         $data.abortController = new AbortController();
 
-        // preprocess prompt
-        if ($data.prompt.endsWith('</s>')) {
-            $data.prompt = $data.prompt.slice(0, -'</s>'.length);
-        }
-
-        let lastToken;
-        let lastTokenCount = 0;
-
         const tokenStream = generateText(
             $data.prompt,
-            $data.abortController.signal
+            { signal: $data.abortController.signal, raw: true }
         );
 
         for await (const token of tokenStream) {
             $data.prompt += token;
-
-            if (token === lastToken) {
-                lastTokenCount++;
-            } else {
-                lastToken = token;
-                lastTokenCount = 1;
-            }
-        }
-
-        if (lastTokenCount > 1) {
-            $data.prompt = $data.prompt.slice(0, -lastToken.length);
-            $data.prompt += '</s>';
-            if (!$data.prompt.startsWith('<s>')) {
-                $data.prompt = '<s>' + $data.prompt;
-            }
         }
 
         $data.loading = false;
