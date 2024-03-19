@@ -74,7 +74,7 @@
     'use strict';
 
     function generateImage(prompt) {
-        return fetch('/api/run/@cf/stabilityai/stable-diffusion-xl-base-1.0', {
+        return fetch('/api/run/@cf/bytedance/stable-diffusion-xl-lightning', {
             method: 'POST',
             body: JSON.stringify({ prompt }),
         })
